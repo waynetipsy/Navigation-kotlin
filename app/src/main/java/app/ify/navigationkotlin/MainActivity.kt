@@ -49,16 +49,23 @@ class MainActivity : ComponentActivity() {
 
                 // Define the "second" composable Destination
                 composable (
-                  route =  "second/{userName}",
+                  route =  "second/{userName}?age={age}",
                     arguments = listOf(
                         navArgument("userName") {
                             type = NavType.StringType
+                        },
+
+                        navArgument ("age"){
+                            type = NavType.StringType
+                            defaultValue = "30"
+                            nullable = true
                         }
                     )
                     ){
                     backStackEntry ->
                     SecondScreen(navController,
-                        backStackEntry.arguments?.getString("userName").toString()
+                               backStackEntry.arguments?.getString("userName").toString(),
+                                backStackEntry.arguments?.getString("age").toString()
 
                     ) }
 
@@ -77,14 +84,24 @@ fun FirstScreen(navController: NavController) {
             mutableStateOf("")
         }
 
+        var enteredText2 by remember {
+            mutableStateOf("")
+        }
+
         TextField(value = enteredText,
             onValueChange = {enteredText = it},
             label = {Text(text = "Enter your Name")}
         )
 
+
+        TextField(value = enteredText2,
+            onValueChange = {enteredText2 = it},
+            label = {Text(text = "Enter your Age")}
+        )
+
         Button(onClick = {
             //1- Passing the entered name as argument
-            navController.navigate("second/$enteredText")
+            navController.navigate("second/$enteredText?age=$enteredText2")
         }) {
             Text(text = "Go to 2nd Screen")
         }
@@ -92,9 +109,9 @@ fun FirstScreen(navController: NavController) {
 }
 
  @Composable
- fun SecondScreen(navController: NavController, username: String) {
+ fun SecondScreen(navController: NavController, username: String, age: String) {
      Column (modifier = Modifier.padding(40.dp)){
-         Text(text = "Welcome $username")
+         Text(text = "Welcome $username, Your age is $age")
          Button(onClick = {
              navController.navigateUp()
          }) {
